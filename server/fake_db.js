@@ -12,7 +12,7 @@ module.exports = {
     }
   },
   poll_rooms: {
-    "defaultpoll": {
+    'defaultpoll': {
       id: 'defaultpoll',
       title: 'Is this talk useful?',
       active_users: 0,

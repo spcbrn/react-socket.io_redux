@@ -41,7 +41,7 @@ const ioReducer = (action, socket, io) => {
       socket.join(action.data);
       console.log(`User ${socket.id} joined room ${action.data}`);
       room_types.includes(action.data)
-        ? io.to(socket.id).emit('action', { type: `load ${action.data}`, data: db[action.data] })
+        ? io.to(socket.id).emit('action', { type: `LOAD ${action.data}`, payload: db[action.data] })
         : null;
       break;
 
@@ -50,10 +50,10 @@ const ioReducer = (action, socket, io) => {
       console.log(`User ${socket.id} left room ${action.data}`);
       break;
 
-      case 'server/new chatroom':
-      let newRoomId = action.data.replace(/[^a-zA-Z||\d]+/g, '');
-      let newRoom = {
-          id: newRoomId,
+    case 'server/new chatroom':
+      let newChatRoomId = action.data.replace(/[^a-zA-Z||\d]+/g, '');
+      let newChatRoom = {
+          id: newChatRoomId,
           title: action.data,
           messages: [
             {
@@ -62,9 +62,16 @@ const ioReducer = (action, socket, io) => {
             }
           ]
         }
-
-      db.chat_rooms[newRoomId] = newRoom;
+      db.chat_rooms[newChatRoomId] = newChatRoom;
       io.in('chat_rooms').emit('action', {type: 'NEW_CHATROOM', payload: db.chat_rooms});
+      break;
+
+    case 'server/get chat':
+      io.in(action.data).emit('action', { type: 'LOAD_CHAT', payload: db.chat_rooms[action.data] })
+      break;
+
+    case 'server/get poll':
+      io.in(action.data).emit('action', { type: 'LOAD_POLL', payload: db.poll_rooms[action.data] })
       break;
 
     case 'server/new message':
@@ -78,7 +85,7 @@ const ioReducer = (action, socket, io) => {
       let { poll_id, option } = action.data;
 
       db.poll_rooms[poll_id].options[option].votes = ++db.poll_rooms[poll_id].options[option].votes;
-      io.in(poll_id).emit('action', {type: 'POLL_UPDATE', payload: db.poll_rooms[poll_id]});
+      io.in(poll_id).emit('action', {type: 'NEW_VOTE', payload: db.poll_rooms[poll_id]});
 
     default:
       break;
@@ -87,11 +94,4 @@ const ioReducer = (action, socket, io) => {
 
 //----------------REST----------------//
 
-app.get('/api/messages', (req, res) => {
-  res.status(200).send(db.messages);
-})
-
-app.post('/api/newmessage', (req, res) => {
-  db.messages.unshift(req.body);
-  res.status(200).send(db.messages);
-})
+// app.get('/*', (req, res) => res.sendFile(__dirname + './../dist/index.html'));

@@ -3,7 +3,8 @@ import { connect } from 'react-redux';
 
 import RoomCard from './RoomCard';
 
-import { joinRoom, leaveRoom, createNewChatRoom } from './../redux/actions';
+import actions from './../redux/actions';
+let { joinRoom, leaveRoom, createNewChatRoom } = actions.io;
 
 
 class ChatRooms extends Component {

@@ -3,13 +3,14 @@ import { connect } from 'react-redux';
 
 import ChatMessage from './ChatMessage';
 
-import { joinRoom, leaveRoom, setActiveChat, submitChatMessage } from './../redux/actions';
+import actions from './../redux/actions';
+let { joinRoom, leaveRoom, setActiveChat, submitChatMessage } = actions.io;
 
 class ChatDetail extends Component {
 
   componentDidMount = () => {
-    this.props.setActiveChat(this.props.match.params.id);
     this.props.joinRoom(this.props.match.params.id);
+    this.props.setActiveChat(this.props.match.params.id);
   }
 
   componentWillUnmount = () => {
@@ -65,9 +66,9 @@ class ChatDetail extends Component {
 }
 
 const mapStateToProps = state => {
-  return {
-    chat_messages: state.active_chat ? state.active_chat.messages : []
-  }
+  if (!state) return {chat_messages: []};
+  if (state.active_chat) return { chat_messages: state.active_chat.messages };
+  return { chat_messages: [] }
 }
 
 export default connect(mapStateToProps, { joinRoom, leaveRoom, setActiveChat, submitChatMessage })(ChatDetail);

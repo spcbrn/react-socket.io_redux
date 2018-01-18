@@ -2,14 +2,15 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Bar } from 'react-chartjs-2';
 
-import { joinRoom, leaveRoom, setActivePoll, submitPollVote } from './../redux/actions';
+import actions from './../redux/actions';
+let { joinRoom, leaveRoom, setActivePoll, submitPollVote } = actions.io;
 
 
 class PollDetail extends Component {
 
   componentDidMount = () => {
-    this.props.setActivePoll(this.props.match.params.id);
     this.props.joinRoom(this.props.match.params.id);
+    this.props.setActivePoll(this.props.match.params.id);
   }
 
   componentWillUnmount = () => {
@@ -66,9 +67,9 @@ class PollDetail extends Component {
 }
 
 const mapStateToProps = state => {
-  return {
-    poll_data: state.active_poll ? state.active_poll : {}
-  }
+  if (!state) return { poll_data: {} };
+  if (state.active_poll) return { poll_data: state.active_poll };
+  return { poll_data: {} }
 }
 
 export default connect(mapStateToProps, { joinRoom, leaveRoom, setActivePoll, submitPollVote })(PollDetail);

@@ -3,7 +3,8 @@ import { connect } from 'react-redux';
 
 import RoomCard from './RoomCard';
 
-import { joinRoom, leaveRoom } from './../redux/actions';
+import actions from './../redux/actions';
+let { joinRoom, leaveRoom } = actions.io;
 
 
 class PollRooms extends Component {
