@@ -18,8 +18,10 @@ class ChatRooms extends Component {
   }
 
   createNewRoom = () => {
-    this.props.createNewChatRoom(this.refs.roomTitle.value);
-    this.refs.roomTitle.value = '';
+    let { roomTitle } = this.refs;
+
+    this.props.createNewChatRoom(roomTitle.value);
+    roomTitle.value = '';
   }
 
   render() {
